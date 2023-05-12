@@ -64,6 +64,11 @@ func parseRequest(r *bufio.Reader) (*request, error) {
 	justAuthority := method == "CONNECT" && !strings.HasPrefix(uri, "/")
 	if justAuthority {
 		uri = "http://" + uri
+	} else {
+		//bug on target get nil on burp http out proxy
+		if strings.HasPrefix(uri, "/") {
+			uri = "http://" + header.Get("Host") + uri
+		}
 	}
 
 	u, err := url.ParseRequestURI(uri)
